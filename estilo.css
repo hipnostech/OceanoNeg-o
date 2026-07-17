@@ -1,0 +1,567 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --marte: #e2632f;
+  --marte-claro: #ff9d5c;
+  --marte-escuro: #7a1f12;
+  --painel: rgba(24, 12, 10, 0.82);
+  --borda: rgba(255, 160, 110, 0.22);
+  --texto: #f6e7df;
+  --texto-suave: rgba(246, 231, 223, 0.62);
+  --fonte-serif: "Georgia", "Times New Roman", serif;
+  --fonte: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: #060204;
+  font-family: var(--fonte);
+  color: var(--texto);
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Canvas do espaço ocupa a tela toda */
+.webgl {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  outline: none;
+  cursor: grab;
+  touch-action: none;
+}
+
+.webgl:active {
+  cursor: grabbing;
+}
+
+/* ===================== ABERTURA ===================== */
+.abertura {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  background: radial-gradient(circle at 50% 60%, rgba(120, 30, 18, 0.35), rgba(6, 2, 4, 0.92) 60%);
+  backdrop-filter: blur(2px);
+  transition: opacity 1.4s ease, visibility 1.4s ease;
+}
+
+.abertura.oculta {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.abertura__para {
+  font-family: var(--fonte-serif);
+  font-style: italic;
+  font-size: clamp(0.95rem, 3.5vw, 1.25rem);
+  color: var(--marte-claro);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  opacity: 0;
+  animation: subir 1.2s ease 0.2s forwards;
+}
+
+.abertura__titulo {
+  font-family: var(--fonte-serif);
+  font-size: clamp(2.6rem, 12vw, 6rem);
+  font-weight: 700;
+  letter-spacing: 1px;
+  line-height: 1;
+  background: linear-gradient(90deg, #ffd7a8, #ff7e46, #c02f18);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 60px rgba(226, 99, 47, 0.35);
+  opacity: 0;
+  animation: subir 1.2s ease 0.5s forwards;
+}
+
+.abertura__sub {
+  margin-top: 18px;
+  font-family: var(--fonte-serif);
+  font-style: italic;
+  font-size: clamp(0.9rem, 3.6vw, 1.15rem);
+  line-height: 1.6;
+  color: var(--texto-suave);
+  opacity: 0;
+  animation: subir 1.2s ease 0.9s forwards;
+}
+
+.abertura__botao {
+  margin-top: 40px;
+  padding: 16px 36px;
+  border: 1px solid rgba(255, 160, 110, 0.5);
+  border-radius: 999px;
+  background: rgba(226, 99, 47, 0.14);
+  color: var(--texto);
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 40px rgba(226, 99, 47, 0.25);
+  transition: transform 0.25s ease, box-shadow 0.4s ease, background 0.25s ease;
+  opacity: 0;
+  animation: subir 1.2s ease 1.3s forwards, pulsar 3.5s ease-in-out 2.5s infinite;
+}
+
+.abertura__botao:hover {
+  transform: scale(1.06);
+  background: rgba(226, 99, 47, 0.28);
+  box-shadow: 0 0 60px rgba(226, 99, 47, 0.5);
+}
+
+.abertura__nota {
+  margin-top: 26px;
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(246, 231, 223, 0.4);
+  opacity: 0;
+  animation: subir 1.2s ease 1.6s forwards;
+}
+
+@keyframes subir {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulsar {
+  0%, 100% { box-shadow: 0 0 30px rgba(226, 99, 47, 0.25); }
+  50% { box-shadow: 0 0 60px rgba(226, 99, 47, 0.55); }
+}
+
+/* ===================== MARCA (título flutuante) ===================== */
+.marca {
+  position: fixed;
+  top: 22px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+  z-index: 5;
+  padding: 0 16px;
+  opacity: 0;
+  transition: opacity 1s ease 0.3s;
+}
+
+.marca.visivel {
+  opacity: 1;
+}
+
+.marca h2 {
+  font-family: var(--fonte-serif);
+  font-size: clamp(1.3rem, 4.5vw, 2rem);
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #ffe3cd;
+  text-shadow: 0 0 30px rgba(226, 99, 47, 0.4);
+}
+
+.marca p {
+  margin-top: 6px;
+  font-size: 0.74rem;
+  color: var(--texto-suave);
+  letter-spacing: 0.4px;
+}
+
+/* Etiqueta que segue a estrela */
+.rotulo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 6;
+  pointer-events: none;
+  transform: translate(-50%, -170%);
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(20, 8, 6, 0.72);
+  border: 1px solid var(--borda);
+  backdrop-filter: blur(6px);
+  font-family: var(--fonte-serif);
+  font-style: italic;
+  font-size: 0.78rem;
+  color: #ffe3cd;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  display: none;
+}
+
+/* ===================== POEMA ===================== */
+.poema {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -46%) scale(0.96);
+  width: min(440px, calc(100% - 36px));
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  border-radius: 22px;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7), 0 0 60px rgba(226, 99, 47, 0.12);
+  padding: 30px 30px 22px;
+  z-index: 25;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+}
+
+.poema.aberto {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Quando a estrela é uma frase de vocês, o painel fica dourado */
+.poema--nos {
+  border-color: rgba(255, 214, 120, 0.45);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7), 0 0 70px rgba(255, 200, 100, 0.18);
+}
+
+.poema--nos .poema__conta {
+  color: #ffd678;
+}
+
+.poema--nos .poema__titulo {
+  color: #ffedc4;
+}
+
+.poema__fechar {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--texto);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.poema__fechar:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.poema__conta {
+  font-size: 0.68rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--marte-claro);
+  margin-bottom: 8px;
+}
+
+.poema__titulo {
+  font-family: var(--fonte-serif);
+  font-style: italic;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffe3cd;
+  margin-bottom: 18px;
+  padding-right: 26px;
+}
+
+.poema__corpo {
+  font-family: var(--fonte-serif);
+  font-size: 1.08rem;
+  line-height: 1.75;
+  color: var(--texto);
+  min-height: 60px;
+}
+
+.poema__corpo .verso {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: aparecer 0.6s ease forwards;
+}
+
+.poema__corpo .vazio {
+  display: block;
+  height: 0.85rem;
+}
+
+@keyframes aparecer {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.poema__nav {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.pnav {
+  padding: 11px 16px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: rgba(226, 99, 47, 0.12);
+  color: var(--texto);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.pnav--texto {
+  flex: 1;
+}
+
+.pnav:hover {
+  background: rgba(226, 99, 47, 0.28);
+}
+
+.pnav:active {
+  transform: scale(0.97);
+}
+
+/* ===================== PLAYER ===================== */
+.player {
+  position: fixed;
+  bottom: 22px;
+  left: 22px;
+  z-index: 20;
+  width: min(340px, calc(100% - 44px));
+}
+
+.player__toggle {
+  position: absolute;
+  top: -14px;
+  right: -6px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--borda);
+  border-radius: 50%;
+  background: rgba(24, 12, 10, 0.9);
+  color: var(--marte-claro);
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.player__toggle:hover {
+  transform: scale(1.1);
+  background: rgba(226, 99, 47, 0.3);
+}
+
+.player__conteudo {
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  border-radius: 18px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6);
+  padding: 14px 14px 10px;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform-origin: bottom left;
+}
+
+.player.recolhido .player__conteudo {
+  opacity: 0;
+  transform: scale(0.85);
+  pointer-events: none;
+}
+
+.player__legenda {
+  font-size: 0.66rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--marte-claro);
+  margin: 2px 4px 8px;
+}
+
+.player__linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 2px 4px 6px;
+}
+
+.player__botao {
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  border: 1px solid rgba(255, 160, 110, 0.5);
+  border-radius: 50%;
+  background: rgba(226, 99, 47, 0.2);
+  color: var(--texto);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s, box-shadow 0.3s;
+}
+
+.player__botao:hover {
+  background: rgba(226, 99, 47, 0.38);
+  transform: scale(1.06);
+}
+
+.player__botao:active {
+  transform: scale(0.95);
+}
+
+/* enquanto a música toca, o botão "respira" */
+.player__botao.tocando {
+  animation: pulsar 2.6s ease-in-out infinite;
+}
+
+.player__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.player__info b {
+  display: block;
+  font-size: 0.95rem;
+  color: #ffe3cd;
+}
+
+.player__info span {
+  font-size: 0.76rem;
+  color: var(--texto-suave);
+}
+
+.player__barra {
+  margin-top: 8px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.player__progresso {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff9d5c, #e2632f);
+  transition: width 0.2s linear;
+}
+
+/* ===================== DEDICATÓRIA FINAL ===================== */
+.final {
+  position: fixed;
+  bottom: 26px;
+  right: 22px;
+  z-index: 15;
+  padding: 13px 22px;
+  border: 1px solid rgba(255, 160, 110, 0.4);
+  border-radius: 999px;
+  background: rgba(24, 12, 10, 0.72);
+  backdrop-filter: blur(10px);
+  color: var(--texto);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  box-shadow: 0 0 30px rgba(226, 99, 47, 0.2);
+  transition: transform 0.2s, box-shadow 0.3s, opacity 0.6s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.final.visivel {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.final:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 44px rgba(226, 99, 47, 0.4);
+}
+
+.dedicatoria {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  display: block;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 24px;
+  background: radial-gradient(circle at 50% 50%, rgba(120, 30, 18, 0.4), rgba(6, 2, 4, 0.94) 65%);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.9s ease, visibility 0.9s ease;
+}
+
+.dedicatoria.aberta {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dedicatoria__cartao {
+  position: relative;
+  max-width: 540px;
+  /* centraliza na vertical quando cabe; rola quando não cabe */
+  margin: max(20px, calc(50vh - 46vh)) auto 40px;
+  text-align: center;
+  padding: 40px 30px;
+}
+
+.dedicatoria__fechar {
+  position: absolute;
+  top: -6px;
+  right: 6px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--texto);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.dedicatoria__fechar:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dedicatoria__olho {
+  font-size: 0.72rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--marte-claro);
+  margin-bottom: 18px;
+}
+
+.dedicatoria__texto {
+  font-family: var(--fonte-serif);
+  font-size: clamp(0.95rem, 3vw, 1.15rem);
+  font-style: italic;
+  line-height: 1.45;
+  color: #ffe9da;
+  text-shadow: 0 0 40px rgba(226, 99, 47, 0.3);
+}
+
+.dedicatoria__assina {
+  margin-top: 24px;
+  font-family: var(--fonte-serif);
+  font-size: 1rem;
+  color: var(--texto-suave);
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 600px) {
+  .marca { top: max(14px, env(safe-area-inset-top)); }
+  .player { bottom: max(14px, env(safe-area-inset-bottom)); left: 14px; }
+  .final { bottom: max(16px, env(safe-area-inset-bottom)); right: 14px; }
+}

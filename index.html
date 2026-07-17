@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Cor de Marte</title>
+  <link rel="stylesheet" href="estilo.css" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- O espaço e Marte são desenhados aqui -->
+  <canvas class="webgl"></canvas>
+
+  <!-- ===================== ABERTURA ===================== -->
+  <!-- Primeira tela: convite para começar a viagem -->
+  <section class="abertura" id="abertura">
+    <p class="abertura__para">para <span id="nomePessoa">você</span></p>
+    <h1 class="abertura__titulo">Cor de Marte</h1>
+    <p class="abertura__sub">uma viagem por um planeta<br />da cor exata do que eu sinto</p>
+    <button class="abertura__botao" id="comecar">Começar a viagem</button>
+    <p class="abertura__nota">ANAVITÓRIA · com fones, no escuro, fica melhor</p>
+  </section>
+
+  <!-- ===================== TÍTULO FLUTUANTE ===================== -->
+  <header class="marca" id="marca">
+    <h2>Cor de Marte</h2>
+    <p id="dica">toque nas estrelas · as douradas guardam as nossas palavras</p>
+  </header>
+
+  <!-- Etiqueta que segue a estrela em foco -->
+  <div class="rotulo" id="rotulo"></div>
+
+  <!-- ===================== POEMA ===================== -->
+  <div class="poema" id="poema" aria-hidden="true">
+    <button class="poema__fechar" id="fecharPoema" title="Fechar">✕</button>
+    <p class="poema__conta" id="poemaConta">poema 1</p>
+    <h3 class="poema__titulo" id="poemaTitulo">—</h3>
+    <div class="poema__corpo" id="poemaCorpo"></div>
+    <div class="poema__nav">
+      <button class="pnav" id="poemaAnterior">⟵</button>
+      <button class="pnav pnav--texto" id="poemaProximo">próxima estrela ⟶</button>
+    </div>
+  </div>
+
+  <!-- ===================== PLAYER (a música é o pilar) ===================== -->
+  <!-- Coloque o arquivo da música NESTA PASTA com o nome "musica.mp3" -->
+  <div class="player" id="player">
+    <button class="player__toggle" id="playerToggle" title="Mostrar/esconder a música">♪</button>
+    <div class="player__conteudo" id="playerConteudo">
+      <p class="player__legenda" id="playerLegenda">a música desta viagem</p>
+      <div class="player__linha">
+        <button class="player__botao" id="tocarPausar" title="Tocar / pausar">▶</button>
+        <div class="player__info">
+          <b>Cor de Marte</b>
+          <span>ANAVITÓRIA</span>
+          <div class="player__barra" id="barra"><div class="player__progresso" id="progresso"></div></div>
+        </div>
+      </div>
+    </div>
+    <audio id="audio" src="musica.mp3" loop preload="auto"></audio>
+  </div>
+
+  <!-- ===================== DEDICATÓRIA FINAL ===================== -->
+  <button class="final" id="botaoFinal">✦ ler a dedicatória</button>
+  <div class="dedicatoria" id="dedicatoria" aria-hidden="true">
+    <div class="dedicatoria__cartao">
+      <button class="dedicatoria__fechar" id="fecharDedicatoria">✕</button>
+      <p class="dedicatoria__olho">a última estrela · para Oceano</p>
+      <p class="dedicatoria__texto" id="dedicatoriaTexto">
+        Dizem que em Marte<br />
+        nunca existiu um oceano —<br />
+        que lá é tudo seco,<br />
+        vermelho, deserto.<br /><br />
+        Eu discordo.<br /><br />
+        Porque foi bem no meio<br />
+        de todo esse vermelho<br />
+        que eu te encontrei, Oceano:<br />
+        a água que este planeta inteiro<br />
+        esperou a vida toda pra conhecer.<br /><br />
+        Dizem que o universo se expande,<br />
+        que tudo, mais cedo ou mais tarde,<br />
+        se afasta de tudo.<br /><br />
+        Menos eu de você.<br />
+        Eu já sou sua.<br /><br />
+        E se um dia toda a luz do céu se apagar,<br />
+        me procura: eu vou estar exatamente aqui,<br />
+        girando pra sempre com o teu nome dentro —<br /><br />
+        porque temos uma vida inteira<br />
+        juntas pela frente.
+      </p>
+      <p class="dedicatoria__assina" id="dedicatoriaAssina">— sua, agora e sempre · com todo o meu vermelho</p>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
